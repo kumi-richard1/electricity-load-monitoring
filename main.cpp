@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -62,6 +63,23 @@ void registerAppliance() {
     cout << "Appliance registered successfully.\n";
 }
 
+void viewAppliances() {
+    if (appliances.empty()) {
+        cout << "No appliances registered.\n";
+        return;
+    }
+
+    cout << "\nAppliances List\n";
+
+    for (int i = 0; i < appliances.size(); i++) {
+        cout << i + 1 << ". "
+             << appliances[i].name
+             << " | Power: " << appliances[i].power << "W"
+             << " | Hours: " << appliances[i].hours
+             << endl;
+    }
+}
+
 int main() {
     int choice;
 
@@ -77,7 +95,7 @@ int main() {
         if (choice == 1) {
             registerAppliance();
         } else if (choice == 2) {
-            cout << "View appliances selected.\n";
+            viewAppliances();
         } else if (choice == 3) {
             cout << "Search appliance selected.\n";
         } else if (choice == 4) {
