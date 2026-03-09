@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -51,6 +52,39 @@ void saveToFile(const Appliance& appliance) {
         file << appliance.name << "," << appliance.power << "," << appliance.hours << endl;
         file.close();
     }
+}
+
+void loadFromFile() {
+    ifstream file(APPLIANCE_FILE);
+
+    if (!file.is_open()) {
+        return;
+    }
+
+    while (true) {
+        Appliance appliance;
+        string powerText;
+        string hoursText;
+
+        if (!getline(file, appliance.name, ',')) {
+            break;
+        }
+
+        if (!getline(file, powerText, ',')) {
+            break;
+        }
+
+        if (!getline(file, hoursText)) {
+            break;
+        }
+
+        appliance.power = stod(powerText);
+        appliance.hours = stod(hoursText);
+
+        appliances.push_back(appliance);
+    }
+
+    file.close();
 }
 
 void showMenu() {
@@ -191,6 +225,8 @@ void calculateBill() {
 }
 
 int main() {
+    loadFromFile();
+
     int choice;
 
     do {
