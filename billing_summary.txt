@@ -1,0 +1,7 @@
+Billing Summary
+========================
+Car -> 1.488 kWh/day
+werw -> 0.092 kWh/day
+
+Total Energy: 1.58 kWh/day
+Total Bill: 3.16

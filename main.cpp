@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -23,6 +22,10 @@ void clearBadInput() {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
+double energyPerDay(const Appliance& appliance) {
+    return (appliance.power * appliance.hours) / 1000.0;
+}
+
 string makeLowercase(string text) {
     for (int i = 0; i < text.size(); i++) {
         if (text[i] >= 'A' && text[i] <= 'Z') {
@@ -30,20 +33,6 @@ string makeLowercase(string text) {
         }
     }
     return text;
-}
-
-double energyPerDay(const Appliance& appliance) {
-    return (appliance.power * appliance.hours) / 1000.0;
-}
-
-double totalEnergyUsed() {
-    double total = 0;
-
-    for (int i = 0; i < appliances.size(); i++) {
-        total = total + energyPerDay(appliances[i]);
-    }
-
-    return total;
 }
 
 void saveToFile(const Appliance& appliance) {
@@ -88,20 +77,20 @@ void loadFromFile() {
     file.close();
 }
 
-void showMenu() {
-    cout << "\n==============================\n";
-    cout << " Electrical Load Monitoring\n";
-    cout << "==============================\n";
+void displayMenu() {
+    cout << "\n=================================\n";
+    cout << " Electrical Load Monitoring System\n";
+    cout << "=================================\n";
     cout << "1. Register appliance\n";
     cout << "2. View appliances\n";
     cout << "3. Search appliance\n";
     cout << "4. Energy summary\n";
     cout << "5. Calculate electricity bill\n";
     cout << "0. Exit\n";
-    cout << "Choose: ";
+    cout << "Enter your choice: ";
 }
 
-void registerAppliance() {
+void addAppliance() {
     Appliance appliance;
 
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -118,7 +107,7 @@ void registerAppliance() {
         return;
     }
 
-    cout << "Enter usage hours per day: ";
+    cout << "Enter hours used per day: ";
     cin >> appliance.hours;
 
     if (cin.fail()) {
@@ -133,24 +122,23 @@ void registerAppliance() {
     cout << "Appliance registered successfully.\n";
 }
 
-void viewAppliances() {
+void displayAppliances() {
     if (appliances.empty()) {
         cout << "No appliances registered.\n";
         return;
     }
 
-    cout << "\nAppliances List\n";
+    cout << "\nRegistered Appliances\n";
+    cout << "--------------------------\n";
 
     for (int i = 0; i < appliances.size(); i++) {
-        cout << i + 1 << ". "
-             << appliances[i].name
-             << " | Power: " << appliances[i].power << "W"
-             << " | Hours: " << appliances[i].hours
-             << endl;
+        cout << i + 1 << ". " << appliances[i].name
+             << " | " << appliances[i].power << " W"
+             << " | " << appliances[i].hours << " hrs/day\n";
     }
 }
 
-void searchAppliance() {
+void findAppliance() {
     if (appliances.empty()) {
         cout << "No appliances available.\n";
         return;
@@ -158,20 +146,20 @@ void searchAppliance() {
 
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-    string searchName;
+    string keyword;
     cout << "Enter appliance name: ";
-    getline(cin, searchName);
+    getline(cin, keyword);
 
-    searchName = makeLowercase(searchName);
+    keyword = makeLowercase(keyword);
 
     bool found = false;
 
     for (int i = 0; i < appliances.size(); i++) {
-        string currentName = makeLowercase(appliances[i].name);
+        string storedName = makeLowercase(appliances[i].name);
 
-        if (currentName.find(searchName) != string::npos) {
+        if (storedName.find(keyword) != string::npos) {
             cout << appliances[i].name
-                 << " | " << appliances[i].power << "W"
+                 << " | " << appliances[i].power << " W"
                  << " | " << appliances[i].hours << " hrs"
                  << " | " << energyPerDay(appliances[i]) << " kWh/day\n";
             found = true;
@@ -183,6 +171,16 @@ void searchAppliance() {
     }
 }
 
+double totalEnergyUsed() {
+    double total = 0;
+
+    for (int i = 0; i < appliances.size(); i++) {
+        total = total + energyPerDay(appliances[i]);
+    }
+
+    return total;
+}
+
 void showEnergySummary() {
     if (appliances.empty()) {
         cout << "No appliances available.\n";
@@ -190,6 +188,7 @@ void showEnergySummary() {
     }
 
     cout << "\nEnergy Summary\n";
+    cout << "--------------------------\n";
 
     for (int i = 0; i < appliances.size(); i++) {
         cout << appliances[i].name
@@ -201,7 +200,7 @@ void showEnergySummary() {
     cout << "Total Energy = " << totalEnergyUsed() << " kWh/day\n";
 }
 
-void calculateBill() {
+void generateBill() {
     if (appliances.empty()) {
         cout << "No appliances available.\n";
         return;
@@ -219,10 +218,10 @@ void calculateBill() {
     }
 
     double totalEnergy = totalEnergyUsed();
-    double totalBill = totalEnergy * costPerKWh;
+    double billAmount = totalEnergy * costPerKWh;
 
     cout << "\nTotal Energy: " << totalEnergy << " kWh/day\n";
-    cout << "Electricity Bill: " << totalBill << endl;
+    cout << "Electricity Bill: " << billAmount << endl;
 
     ofstream file(BILL_FILE);
 
@@ -238,7 +237,7 @@ void calculateBill() {
         }
 
         file << "\nTotal Energy: " << totalEnergy << " kWh/day\n";
-        file << "Total Bill: " << totalBill << endl;
+        file << "Total Bill: " << billAmount << endl;
 
         file.close();
     }
@@ -252,7 +251,7 @@ int main() {
     int choice;
 
     do {
-        showMenu();
+        displayMenu();
         cin >> choice;
 
         if (cin.fail()) {
@@ -260,20 +259,27 @@ int main() {
             choice = -1;
         }
 
-        if (choice == 1) {
-            registerAppliance();
-        } else if (choice == 2) {
-            viewAppliances();
-        } else if (choice == 3) {
-            searchAppliance();
-        } else if (choice == 4) {
-            showEnergySummary();
-        } else if (choice == 5) {
-            calculateBill();
-        } else if (choice == 0) {
-            cout << "Goodbye\n";
-        } else {
-            cout << "Invalid choice\n";
+        switch (choice) {
+            case 1:
+                addAppliance();
+                break;
+            case 2:
+                displayAppliances();
+                break;
+            case 3:
+                findAppliance();
+                break;
+            case 4:
+                showEnergySummary();
+                break;
+            case 5:
+                generateBill();
+                break;
+            case 0:
+                cout << "Goodbye\n";
+                break;
+            default:
+                cout << "Invalid choice\n";
         }
 
     } while (choice != 0);
