@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -26,6 +25,20 @@ string makeLowercase(string text) {
         }
     }
     return text;
+}
+
+double energyPerDay(const Appliance& appliance) {
+    return (appliance.power * appliance.hours) / 1000.0;
+}
+
+double totalEnergyUsed() {
+    double total = 0;
+
+    for (int i = 0; i < appliances.size(); i++) {
+        total = total + energyPerDay(appliances[i]);
+    }
+
+    return total;
 }
 
 void showMenu() {
@@ -111,7 +124,8 @@ void searchAppliance() {
         if (currentName.find(searchName) != string::npos) {
             cout << appliances[i].name
                  << " | " << appliances[i].power << "W"
-                 << " | " << appliances[i].hours << " hrs\n";
+                 << " | " << appliances[i].hours << " hrs"
+                 << " | " << energyPerDay(appliances[i]) << " kWh/day\n";
             found = true;
         }
     }
@@ -119,6 +133,24 @@ void searchAppliance() {
     if (!found) {
         cout << "Appliance not found.\n";
     }
+}
+
+void showEnergySummary() {
+    if (appliances.empty()) {
+        cout << "No appliances available.\n";
+        return;
+    }
+
+    cout << "\nEnergy Summary\n";
+
+    for (int i = 0; i < appliances.size(); i++) {
+        cout << appliances[i].name
+             << " -> "
+             << energyPerDay(appliances[i])
+             << " kWh/day\n";
+    }
+
+    cout << "Total Energy = " << totalEnergyUsed() << " kWh/day\n";
 }
 
 int main() {
@@ -140,7 +172,7 @@ int main() {
         } else if (choice == 3) {
             searchAppliance();
         } else if (choice == 4) {
-            cout << "Energy summary selected.\n";
+            showEnergySummary();
         } else if (choice == 5) {
             cout << "Calculate bill selected.\n";
         } else if (choice == 0) {
