@@ -1,6 +1,22 @@
 #include <iostream>
+#include <string>
+#include <vector>
+#include <limits>
 
 using namespace std;
+
+struct Appliance {
+    string name;
+    double power;
+    double hours;
+};
+
+vector<Appliance> appliances;
+
+void clearBadInput() {
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
 
 void showMenu() {
     cout << "\n==============================\n";
@@ -15,6 +31,37 @@ void showMenu() {
     cout << "Choose: ";
 }
 
+void registerAppliance() {
+    Appliance appliance;
+
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    cout << "Enter appliance name: ";
+    getline(cin, appliance.name);
+
+    cout << "Enter power rating (W): ";
+    cin >> appliance.power;
+
+    if (cin.fail()) {
+        clearBadInput();
+        cout << "Invalid power input.\n";
+        return;
+    }
+
+    cout << "Enter usage hours per day: ";
+    cin >> appliance.hours;
+
+    if (cin.fail()) {
+        clearBadInput();
+        cout << "Invalid hours input.\n";
+        return;
+    }
+
+    appliances.push_back(appliance);
+
+    cout << "Appliance registered successfully.\n";
+}
+
 int main() {
     int choice;
 
@@ -22,8 +69,13 @@ int main() {
         showMenu();
         cin >> choice;
 
+        if (cin.fail()) {
+            clearBadInput();
+            choice = -1;
+        }
+
         if (choice == 1) {
-            cout << "Register appliance selected.\n";
+            registerAppliance();
         } else if (choice == 2) {
             cout << "View appliances selected.\n";
         } else if (choice == 3) {
