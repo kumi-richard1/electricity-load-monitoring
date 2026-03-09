@@ -153,6 +153,30 @@ void showEnergySummary() {
     cout << "Total Energy = " << totalEnergyUsed() << " kWh/day\n";
 }
 
+void calculateBill() {
+    if (appliances.empty()) {
+        cout << "No appliances available.\n";
+        return;
+    }
+
+    double costPerKWh;
+
+    cout << "Enter cost per kWh: ";
+    cin >> costPerKWh;
+
+    if (cin.fail()) {
+        clearBadInput();
+        cout << "Invalid cost input.\n";
+        return;
+    }
+
+    double totalEnergy = totalEnergyUsed();
+    double totalBill = totalEnergy * costPerKWh;
+
+    cout << "\nTotal Energy: " << totalEnergy << " kWh/day\n";
+    cout << "Electricity Bill: " << totalBill << endl;
+}
+
 int main() {
     int choice;
 
@@ -174,7 +198,7 @@ int main() {
         } else if (choice == 4) {
             showEnergySummary();
         } else if (choice == 5) {
-            cout << "Calculate bill selected.\n";
+            calculateBill();
         } else if (choice == 0) {
             cout << "Goodbye\n";
         } else {
