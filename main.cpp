@@ -1,9 +1,12 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <limits>
 
 using namespace std;
+
+const string APPLIANCE_FILE = "appliances.txt";
 
 struct Appliance {
     string name;
@@ -39,6 +42,15 @@ double totalEnergyUsed() {
     }
 
     return total;
+}
+
+void saveToFile(const Appliance& appliance) {
+    ofstream file(APPLIANCE_FILE, ios::app);
+
+    if (file.is_open()) {
+        file << appliance.name << "," << appliance.power << "," << appliance.hours << endl;
+        file.close();
+    }
 }
 
 void showMenu() {
@@ -81,6 +93,7 @@ void registerAppliance() {
     }
 
     appliances.push_back(appliance);
+    saveToFile(appliance);
 
     cout << "Appliance registered successfully.\n";
 }
