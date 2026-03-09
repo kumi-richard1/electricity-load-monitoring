@@ -8,6 +8,7 @@
 using namespace std;
 
 const string APPLIANCE_FILE = "appliances.txt";
+const string BILL_FILE = "billing_summary.txt";
 
 struct Appliance {
     string name;
@@ -222,6 +223,27 @@ void calculateBill() {
 
     cout << "\nTotal Energy: " << totalEnergy << " kWh/day\n";
     cout << "Electricity Bill: " << totalBill << endl;
+
+    ofstream file(BILL_FILE);
+
+    if (file.is_open()) {
+        file << "Billing Summary\n";
+        file << "========================\n";
+
+        for (int i = 0; i < appliances.size(); i++) {
+            file << appliances[i].name
+                 << " -> "
+                 << energyPerDay(appliances[i])
+                 << " kWh/day\n";
+        }
+
+        file << "\nTotal Energy: " << totalEnergy << " kWh/day\n";
+        file << "Total Bill: " << totalBill << endl;
+
+        file.close();
+    }
+
+    cout << "Billing summary saved to billing_summary.txt\n";
 }
 
 int main() {
