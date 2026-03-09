@@ -19,6 +19,15 @@ void clearBadInput() {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
+string makeLowercase(string text) {
+    for (int i = 0; i < text.size(); i++) {
+        if (text[i] >= 'A' && text[i] <= 'Z') {
+            text[i] = text[i] + 32;
+        }
+    }
+    return text;
+}
+
 void showMenu() {
     cout << "\n==============================\n";
     cout << " Electrical Load Monitoring\n";
@@ -80,6 +89,38 @@ void viewAppliances() {
     }
 }
 
+void searchAppliance() {
+    if (appliances.empty()) {
+        cout << "No appliances available.\n";
+        return;
+    }
+
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    string searchName;
+    cout << "Enter appliance name: ";
+    getline(cin, searchName);
+
+    searchName = makeLowercase(searchName);
+
+    bool found = false;
+
+    for (int i = 0; i < appliances.size(); i++) {
+        string currentName = makeLowercase(appliances[i].name);
+
+        if (currentName.find(searchName) != string::npos) {
+            cout << appliances[i].name
+                 << " | " << appliances[i].power << "W"
+                 << " | " << appliances[i].hours << " hrs\n";
+            found = true;
+        }
+    }
+
+    if (!found) {
+        cout << "Appliance not found.\n";
+    }
+}
+
 int main() {
     int choice;
 
@@ -97,7 +138,7 @@ int main() {
         } else if (choice == 2) {
             viewAppliances();
         } else if (choice == 3) {
-            cout << "Search appliance selected.\n";
+            searchAppliance();
         } else if (choice == 4) {
             cout << "Energy summary selected.\n";
         } else if (choice == 5) {
